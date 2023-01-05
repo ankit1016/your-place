@@ -1,0 +1,70 @@
+
+import axios from "axios"
+import {useDispatch} from 'react-redux'
+import { ThemeActions } from '../../redux/reducers/ThemeSlice'
+
+
+
+
+const useAxios = () => {
+const dispatch=useDispatch()
+
+
+// ---------------------------------------------------------------error handling function----------------------------------------------------------------
+const errorHandling = (errors) => {
+    if (errors instanceof Object) {
+        for (const error in errors) {
+            errorHandling(errors[`${error}`])
+        }
+    }
+    else if (Array.isArray(errors)) {
+        errors.map((item) => dispatch(ThemeActions.setError(item)))
+    }
+    else {
+       dispatch(ThemeActions.setError(errors));
+    }
+
+}
+
+// ---------------------------------------------------------------create common axios api------------------------------------------------------------------------
+const axiosAPi=axios.create({
+    baseURL:process.env.REACT_APP_BACKEND_URL
+})
+
+
+
+// -----------------------------------------------------------------All request come here------------------------------------------------------------------
+axiosAPi.interceptors.request.use(async (request)=>{
+    dispatch(ThemeActions.setSpinner(true))
+     const token =localStorage.getItem('token')
+    request.headers={"Authorization":"Bearer "+token}
+    return request
+},function(error){
+return Promise.reject(error)
+})
+
+
+
+// ----------------------------------------------------------------All response go from here----------------------------------------------------------------------
+axiosAPi.interceptors.response.use((response)=>{
+dispatch(ThemeActions.setSpinner(false))
+    return response.data
+},(error)=>{
+    dispatch(ThemeActions.setSpinner(false))
+    if (error?.response?.status >= 500 && error?.response?.status <= 599)
+   dispatch(ThemeActions.setError("Server Error"));
+ else if (error?.response?.status === 404)
+   dispatch(ThemeActions.setError("Not Found"));
+ else
+    errorHandling({ ...error?.response?.data })
+
+return Promise.reject(error);
+})
+
+
+return axiosAPi
+
+}
+
+
+export default useAxios

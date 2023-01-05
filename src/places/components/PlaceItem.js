@@ -6,15 +6,23 @@ import Modal from '../../shared/components/UIElements/Modal';
 import Map from '../../shared/components/UIElements/Map';
 import { AuthContext } from '../../shared/context/auth-context';
 import './PlaceItem.css';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
+import useAxios from '../../shared/hooks/useAxios';
 
 const PlaceItem = props => {
   const auth = useContext(AuthContext);
+  
+  
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
+  const navigate=useNavigate()
   const openMapHandler = () => setShowMap(true);
-
   const closeMapHandler = () => setShowMap(false);
+   
+  const axiosApi=useAxios()
+// console.log(props)
 
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -26,7 +34,7 @@ const PlaceItem = props => {
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
-    console.log('DELETING...');
+    axiosApi.delete(`api/places/${props.id}`).then((res)=>{navigate('/')})
   };
 
   return (
@@ -66,8 +74,9 @@ const PlaceItem = props => {
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
+        
           <div className="place-item__image">
-            <img src={props.image} alt={props.title} />
+            <img src={`http://localhost:5000/${props.image}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>
@@ -78,11 +87,11 @@ const PlaceItem = props => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId===props.creatorId && (
               <Button to={`/places/${props.id}`}>EDIT</Button>
             )}
 
-            {auth.isLoggedIn && (
+            {auth.userId===props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>

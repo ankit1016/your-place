@@ -12,13 +12,20 @@ import { useForm } from '../../shared/hooks/form-hook';
 import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
 
-import Axios from 'axios'
 
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
+import { useNavigate } from 'react-router-dom';
+import useAxios from '../../shared/hooks/useAxios';
 
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
 
+ const navigate=useNavigate()
+
+const axiosApi=useAxios()
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -59,7 +66,16 @@ const Auth = () => {
 
   const authSubmitHandler = async event => {
     event.preventDefault();
-    if(isLoginMode){}
+  
+    if(isLoginMode){
+      const body={
+        email:formState.inputs.email.value,
+        password:formState.inputs.password.value
+      }
+    axiosApi.post('user/login',body)
+    .then((res)=>{console.log(res.data);auth.login(res.data.userId,res.data.token);navigate('/')})
+
+    }
     else{
       // try {
       //   const response=await fetch('http://localhost:500/user/signup',{
@@ -78,25 +94,28 @@ const Auth = () => {
       // } catch (error) {
       //   console.log(error)
       // } 
-      console.log()
-      const body={
-              name:formState.inputs.name.value,
-              email:formState.inputs.name.value,
-              password:formState.inputs.name.value,
-            }
-      
-      Axios.post('http://localhost:5000/user/signup',body).then(res=>console.log(res)).catch(error=>console.log(error))
+    
+      const formData = new FormData();
+      formData.append('email', formState.inputs.email.value);
+      formData.append('name', formState.inputs.name.value);
+      formData.append('password', formState.inputs.password.value);
+      formData.append('image', formState.inputs.image.value);
+     
+      axiosApi.post('user/signup',formData).then(res=>{console.log(res);auth.login(res.data.userId,res.data.token);navigate('/')})
   }
     // console.log(formState.inputs);
     //    Axios.post(' http://localhost:5000/api/post',formState.inputs).then(res=>{
     //     console.log(res.data)
         
     //    })
-    auth.login();
+
   };
 
   return (
+    <>
+    {/* <ErrorModal error={error} onClear={()=>setError()}/> */}
     <Card className="authentication">
+  
       <h2>Login Required</h2>
       <hr />
       <form onSubmit={authSubmitHandler}>
@@ -111,6 +130,14 @@ const Auth = () => {
             onInput={inputHandler}
           />
         )}
+          {!isLoginMode && (
+            <ImageUpload
+              center
+              id="image"
+              onInput={inputHandler}
+              errorText="Please provide an image."
+            />
+          )}
         <Input
           element="input"
           id="email"
@@ -125,8 +152,8 @@ const Auth = () => {
           id="password"
           type="password"
           label="Password"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid password, at least 5 characters."
+          validators={[VALIDATOR_MINLENGTH(6)]}
+          errorText="Please enter a valid password, at least 6 characters."
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>
@@ -137,6 +164,7 @@ const Auth = () => {
         SWITCH TO {isLoginMode ? 'SIGNUP' : 'LOGIN'}
       </Button>
     </Card>
+    </>
   );
 };
 
