@@ -12,9 +12,6 @@ import { useForm } from '../../shared/hooks/form-hook';
 import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
 
-
-import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
-import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import { useNavigate } from 'react-router-dom';
 import useAxios from '../../shared/hooks/useAxios';
@@ -73,7 +70,7 @@ const axiosApi=useAxios()
         password:formState.inputs.password.value
       }
     axiosApi.post('user/login',body)
-    .then((res)=>{console.log(res.data);auth.login(res.data.userId,res.data.token);navigate('/')})
+    .then((res)=>{console.log(res);auth.login(res.userId,res.token);navigate('/')})
 
     }
     else{
