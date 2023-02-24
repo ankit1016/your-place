@@ -1,0 +1,43 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "plugin:react/jsx-runtime",
+        "airbnb"
+    ],
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "react/function-component-definition": [
+            2,
+            {
+                "namedComponents": "arrow-function"
+            }
+        ],
+        "react/react-in-jsx-scope": "off",
+        "linebreak-style": "off",
+        "space-infix-ops": "off",
+        "object-curly-newline": "off",
+        "max-len": "off",
+        "react/jsx-indent": 0,
+        "indent": "off",
+        "jsx-quotes": "off",
+        "react/forbid-prop-types": 0,
+        "arrow-body-style": "off",
+        "import/prefer-default-export": "off",
+        "object-curly-spacing": "off",
+        "quotes": "off",
+        "no-restricted-syntax": "off",
+        "guard-for-in": "off",
+        "eol-last": "off"
+    }
+}

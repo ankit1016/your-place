@@ -1,4 +1,8 @@
-import {BrowserRouter as Router,Route, Routes} from 'react-router-dom'
+/* eslint-disable react/jsx-no-constructed-context-values */
+/* eslint-disable react/jsx-filename-extension */
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import NotFound404 from './notfound404.js';
 
 import Users from './user/pages/Users';
@@ -8,36 +12,33 @@ import UpdatePlace from './places/pages/UpdatePlace';
 import Auth from './user/pages/Auth';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
-import { useCallback, useEffect, useState } from 'react';
-import LoadingSpinner from './shared/components/UIElements/LoadingSpinner.js';
-import ErrorModal from './shared/components/UIElements/ErrorModal.js';
-import { useDispatch, useSelector } from 'react-redux';
-import  { ThemeActions } from './redux/reducers/ThemeSlice.js';
+import LoadingSpinner from './shared/components/UIElements/LoadingSpinner';
+import ErrorModal from './shared/components/UIElements/ErrorModal';
+import { ThemeActions } from './redux/reducers/ThemeSlice';
 // Creates a new app object.
-function App() {
+const App = () => {
   const [token, setToken] = useState(null);
-  const[userId,setUserId]=useState(null)
+  const [userId, setUserId] = useState(null);
 
-  const store=useSelector(state=>state)
-  console.log(store)
-   const dispatch=useDispatch()
+  const store = useSelector((state) => state);
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-      setToken(localStorage.getItem("token"))
-      setUserId(localStorage.getItem('user'))
-    }, [])
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+    setUserId(localStorage.getItem('user'));
+  }, []);
 
-  const login = useCallback((uid,token) => {
-    setToken(token);
-    localStorage.setItem('user',uid)
-    localStorage.setItem("token",`${token}`)
-    setUserId(uid)
+  const login = useCallback((uid, tok) => {
+    setToken(tok);
+    localStorage.setItem('user', uid);
+    localStorage.setItem("token", `${tok}`);
+    setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
-    setUserId(null)
-    localStorage.clear()
+    setUserId(null);
+    localStorage.clear();
   }, []);
 
   let routes;
@@ -45,47 +46,42 @@ function App() {
   if (token) {
     routes = (
       <>
-        <Route path="/" element={<Users />}/>
-        <Route path="/:userId" element={<UserPlaces/>}/>
-       
-        <Route path="/places/new" element={ <NewPlace />} />
-        <Route path="/places/:placeId" element={<UpdatePlace/>}/>
-          
-       
+        <Route path="/" element={<Users />} />
+        <Route path="/:userId" element={<UserPlaces />} />
+        <Route path="/places/new" element={<NewPlace />} />
+        <Route path="/places/:placeId" element={<UpdatePlace />} />
       </>
     );
   } else {
     routes = (
       <>
-        <Route path="/" element={<Users/>}/>
-        <Route path="/:userId" element={<UserPlaces/>}/>
-        <Route path="/auth" element={<Auth/>}/>        
+        <Route path="/" element={<Users />} />
+        <Route path="/:userId" element={<UserPlaces />} />
+        <Route path="/auth" element={<Auth />} />
       </>
     );
   }
 
+  return (
+    <>
+      {store.Theme.spinner && <LoadingSpinner asOverlay />}
+      <ErrorModal error={store.Theme.error} onClear={() => dispatch(ThemeActions.setError(null))} />
+      <AuthContext.Provider
+        value={{ isLoggedIn: !!token, token, login, logout, userId }}
+      >
+        <Router>
+          <Routes>
+            <Route path='/' element={<MainNavigation />}>
+              {/* <Route path='/' element={<Users/>}/> */}
+              {routes}
+              <Route path='*' element={<NotFound404 />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AuthContext.Provider>
 
-
-
-  return (<>
-    {store.Theme.spinner && <LoadingSpinner asOverlay/>}
-    <ErrorModal error={store.Theme.error} onClear={()=>dispatch(ThemeActions.setError(null))}/>
-    <AuthContext.Provider
-      value={{ isLoggedIn: !!token,token:token, login: login, logout: logout,userId:userId}}
-    >
-    <Router>
-      <Routes>
-        <Route path='/' element={<MainNavigation/>}>
-           {/* <Route path='/' element={<Users/>}/> */}
-           {routes}
-          <Route path='*' element={<NotFound404/>}/>
-        </Route>
-      </Routes>
-    </Router>
-    </AuthContext.Provider>
-    
     </>
   );
-}
+};
 
 export default App;

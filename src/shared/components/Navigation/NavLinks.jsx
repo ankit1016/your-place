@@ -4,9 +4,9 @@ import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../../context/auth-context';
 import './NavLinks.css';
 
-const NavLinks = props => {
+const NavLinks = () => {
   const auth = useContext(AuthContext);
-console.warn(auth.userId)
+  const { userId, isLoggedIn, logout } = auth;
   return (
     <ul className="nav-links">
       <li>
@@ -14,24 +14,24 @@ console.warn(auth.userId)
           ALL USERS
         </NavLink>
       </li>
-      {auth.isLoggedIn && (
+      {isLoggedIn && (
         <li>
-          <NavLink to={`/${auth.userId}`}>MY PLACES</NavLink>
+          <NavLink to={`/${userId}`}>MY PLACES</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (
+      {isLoggedIn && (
         <li>
           <NavLink to="/places/new">ADD PLACE</NavLink>
         </li>
       )}
-      {!auth.isLoggedIn && (
+      {!isLoggedIn && (
         <li>
           <NavLink to="/auth">AUTHENTICATE</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (
+      {isLoggedIn && (
         <li>
-          <button onClick={auth.logout}>LOGOUT</button>
+          <button type='button' onClick={logout}>LOGOUT</button>
         </li>
       )}
     </ul>

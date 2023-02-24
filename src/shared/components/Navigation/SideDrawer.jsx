@@ -1,10 +1,12 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 
 import './SideDrawer.css';
 
-const SideDrawer = props => {
+const SideDrawer = (props) => {
   const content = (
     <CSSTransition
       in={props.show}

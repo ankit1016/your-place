@@ -1,14 +1,17 @@
+import { bool, func, string } from 'prop-types';
 import React, { useRef, useState, useEffect } from 'react';
 
 import Button from './Button';
 import './ImageUpload.css';
 
-const ImageUpload = props => {
+const ImageUpload = (props) => {
   const [file, setFile] = useState();
   const [previewUrl, setPreviewUrl] = useState();
   const [isValid, setIsValid] = useState(false);
 
   const filePickerRef = useRef();
+
+  const { onInput, id, errorText, center } = props;
 
   useEffect(() => {
     if (!file) {
@@ -21,10 +24,11 @@ const ImageUpload = props => {
     fileReader.readAsDataURL(file);
   }, [file]);
 
-  const pickedHandler = event => {
+  const pickedHandler = (event) => {
     let pickedFile;
     let fileIsValid = isValid;
     if (event.target.files && event.target.files.length === 1) {
+      // eslint-disable-next-line prefer-destructuring
       pickedFile = event.target.files[0];
       setFile(pickedFile);
       setIsValid(true);
@@ -33,7 +37,7 @@ const ImageUpload = props => {
       setIsValid(false);
       fileIsValid = false;
     }
-    props.onInput(props.id, pickedFile, fileIsValid);
+    onInput(id, pickedFile, fileIsValid);
   };
 
   const pickImageHandler = () => {
@@ -43,14 +47,14 @@ const ImageUpload = props => {
   return (
     <div className="form-control">
       <input
-        id={props.id}
+        id={id}
         ref={filePickerRef}
         style={{ display: 'none' }}
         type="file"
         accept=".jpg,.png,.jpeg"
         onChange={pickedHandler}
       />
-      <div className={`image-upload ${props.center && 'center'}`}>
+      <div className={`image-upload ${center && 'center'}`}>
         <div className="image-upload__preview">
           {previewUrl && <img src={previewUrl} alt="Preview" />}
           {!previewUrl && <p>Please pick an image.</p>}
@@ -59,9 +63,18 @@ const ImageUpload = props => {
           PICK IMAGE
         </Button>
       </div>
-      {!isValid && <p>{props.errorText}</p>}
+      {!isValid && <p>{errorText}</p>}
     </div>
   );
+};
+
+ImageUpload.defaultProps = { center: true };
+
+ImageUpload.propTypes = {
+  onInput: func.isRequired,
+  id: string.isRequired,
+  errorText: string.isRequired,
+  center: bool,
 };
 
 export default ImageUpload;

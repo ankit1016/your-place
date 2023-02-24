@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
@@ -6,75 +6,65 @@ import Button from '../../shared/components/FormElements/Button';
 import Card from '../../shared/components/UIElements/Card';
 import {
   VALIDATOR_REQUIRE,
-  VALIDATOR_MINLENGTH
+  VALIDATOR_MINLENGTH,
 } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
 import './PlaceForm.css';
 
-
-import { AuthContext } from '../../shared/context/auth-context';
 import useAxios from '../../shared/hooks/useAxios';
 
-
-
-
 const UpdatePlace = () => {
-  const auth=useContext(AuthContext)
- 
-  const[loadedPlace,setLoadedPlace]=useState()
- 
-  const placeId = useParams().placeId;
- const navigate=useNavigate()
- const axiosApi=useAxios()
+  const { placeId } = useParams();
+  const navigate = useNavigate();
+  const axiosApi = useAxios();
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
         value: '',
-        isValid: false
+        isValid: false,
       },
       description: {
         value: '',
-        isValid: false
-      }
+        isValid: false,
+      },
     },
-    false
+    false,
   );
 
   // const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId);
 
   useEffect(() => {
-    axiosApi.get(`api/places/${placeId}`).then((res)=>{
+    axiosApi.get(`api/places/${placeId}`).then((res) => {
       // console.log(res)
       setFormData(
         {
           title: {
             value: res.place.title,
-            isValid: true
+            isValid: true,
           },
           description: {
             value: res.place.description,
-            isValid: true
-          }
+            isValid: true,
+          },
         },
-        true
+        true,
       );
-    })
-  
- 
+    });
   }, [placeId]);
 
-  const placeUpdateSubmitHandler = event => {
+  const placeUpdateSubmitHandler = (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
-    const body={title:formState.inputs.title.value,
-                description:formState.inputs.description.value                 
-    }
-    console.log(body)
-    axiosApi.patch(`api/places/${placeId}`,body).then((res)=>{console.log(res);navigate('/')})
+    // console.log(formState.inputs);
+    const body = {
+      title: formState.inputs.title.value,
+      description: formState.inputs.description.value,
+    };
+    axiosApi.patch(`api/places/${placeId}`, body).then((res) => { console.log(res); navigate('/'); });
   };
 
   if (!placeId) {
     return (
+      // eslint-disable-next-line react/jsx-filename-extension
       <div className="center">
         <Card>
           <h2>Could not find place!</h2>
@@ -83,11 +73,7 @@ const UpdatePlace = () => {
     );
   }
 
- 
-
   return (
-    <>
-
     <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
       <Input
         id="title"
@@ -114,7 +100,6 @@ const UpdatePlace = () => {
         UPDATE PLACE
       </Button>
     </form>
-    </>
   );
 };
 
