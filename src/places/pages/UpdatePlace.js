@@ -59,7 +59,7 @@ const UpdatePlace = () => {
       title: formState.inputs.title.value,
       description: formState.inputs.description.value,
     };
-    axiosApi.patch(`api/places/${placeId}`, body).then((res) => { console.log(res); navigate('/'); });
+    axiosApi.patch(`api/places/${placeId}`, body).then(() => { navigate('/'); });
   };
 
   if (!placeId) {

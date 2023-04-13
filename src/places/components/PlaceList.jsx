@@ -10,7 +10,7 @@ import Button from '../../shared/components/FormElements/Button';
 import './PlaceList.css';
 
 const PlaceList = (props) => {
-  console.log(props, !props?.items?.places);
+  // console.log(props, !props?.items?.places);
   if (props?.items?.places?.length === 0 || !props?.items?.places) {
     return (
       <div className="place-list center">
