@@ -17,7 +17,7 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const navigate = useNavigate();
-  const openMapHandler = () => setShowMap(true);
+
   const closeMapHandler = () => setShowMap(false);
 
   const axiosApi = useAxios();
@@ -33,6 +33,7 @@ const PlaceItem = (props) => {
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
+    // eslint-disable-next-line react/prop-types
     axiosApi.delete(`api/places/${props.id}`).then(() => { navigate('/'); });
   };
 
@@ -83,9 +84,11 @@ const PlaceItem = (props) => {
             <p>{props.description}</p>
           </div>
           <div className="place-item__actions">
-            <Button inverse onClick={openMapHandler}>
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(props.address)}`} target="_blank" rel="noopener noreferrer">
+            <Button inverse>
               VIEW ON MAP
             </Button>
+            </a>
             {auth.userId === props.creatorId && (
               <Button to={`/places/${props.id}`}>EDIT</Button>
             )}

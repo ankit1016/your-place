@@ -7,14 +7,18 @@ const UserList = ({ list }) => {
     return <h2>No User Found</h2>;
   }
   return (
+      // Returns a UserItem based on a user list.
+<>
+    {list.map((user) => <UserItem key={user?.id} user={user} />)}
+</>
+  );
+  };
 
-    { list?.map((user) => <UserItem key={user?.id} user={user} />)}
-
-    // Returns a UserItem based on a user list.
-  )
-};
+  UserList.defaultProps={
+    list: [],
+  };
 
 UserList.propTypes = {
-  list: array.isRequired,
+  list: array,
 };
 export default UserList;

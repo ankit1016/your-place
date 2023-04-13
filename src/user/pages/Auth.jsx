@@ -71,7 +71,7 @@ const Auth = () => {
         password: formState.inputs.password.value,
       };
       axiosApi.post('user/login', body)
-        .then((res) => { console.log(res); auth.login(res.userId, res.token); navigate('/'); });
+        .then((res) => { auth.login(res.userId, res.token); navigate('/'); });
     } else {
       // try {
       //   const response=await fetch('http://localhost:500/user/signup',{
@@ -95,9 +95,12 @@ const Auth = () => {
       formData.append('email', formState.inputs.email.value);
       formData.append('name', formState.inputs.name.value);
       formData.append('password', formState.inputs.password.value);
-      formData.append('image', formState.inputs.image.value);
+      formData.append('image', formState.inputs?.image?.value);
 
-      axiosApi.post('user/signup', formData).then((res) => { console.log(res); auth.login(res.data.userId, res.data.token); navigate('/'); });
+      axiosApi.post('user/signup', formData).then((res) => {
+        auth.login(res.userId, res.token);
+        navigate('/');
+});
     }
     // console.log(formState.inputs);
     //    Axios.post(' http://localhost:5000/api/post',formState.inputs).then(res=>{

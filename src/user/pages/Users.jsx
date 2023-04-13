@@ -11,9 +11,7 @@ const Users = () => {
   }, []);
 
   return (
-
     <UsersList items={userData} />
-
   );
 };
 

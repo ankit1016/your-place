@@ -21,6 +21,7 @@ const useAxios = () => {
     // ---------------------------------------------------------------create common axios api------------------------------------------------------------------------
     const axiosAPi = axios.create({
         baseURL: process.env.REACT_APP_BACKEND_URL,
+        // timeout: 20000,
     });
 
     // -----------------------------------------------------------------All request come here------------------------------------------------------------------
@@ -41,6 +42,7 @@ const useAxios = () => {
         dispatch(ThemeActions.setSpinner(false));
         if (error?.response?.status >= 500 && error?.response?.status <= 599) dispatch(ThemeActions.setError("Server Error"));
         else if (error?.response?.status === 404) dispatch(ThemeActions.setError("Not Found"));
+        else if (error?.request?.status===0) dispatch(ThemeActions.setError("You are offline"));
         else errorHandling({ ...error?.response?.data });
 
         return Promise.reject(error);

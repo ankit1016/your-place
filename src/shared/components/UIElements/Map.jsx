@@ -9,13 +9,13 @@ const Map = (props) => {
   const { center, zoom, className, style } = props;
 
   useEffect(() => {
-    const map = new window.google.maps.Map(mapRef.current, {
-      center,
-      zoom,
-    });
+    // const map = new window.google.maps.Map(mapRef.current, {
+    //   center,
+    //   zoom,
+    // });
 
-    const marker = new window.google.maps.Marker({ position: center, map });
-    marker();
+    // const marker = new window.google.maps.Marker({ position: center, map });
+    // marker();
   }, [center, zoom]);
 
   return (
