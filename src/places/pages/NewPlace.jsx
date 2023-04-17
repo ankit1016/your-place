@@ -53,7 +53,7 @@ const NewPlace = () => {
     formData.append('address', formState.inputs.address.value);
     formData.append('creator', userId);
     formData.append('image', formState.inputs.image.value);
-    axiosApi.post('http://localhost:5000/api/places/', formData).then(() => { navigate('/'); });
+    axiosApi.post(`${process.env.REACT_APP_BACKEND_URL}api/places/`, formData).then(() => { navigate('/'); });
   };
 
   return (
